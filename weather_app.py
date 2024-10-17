@@ -1,14 +1,19 @@
-# Step 1: Install the required libraries by running the following commands in your terminal:
-# pip install streamlit requests
-
 import streamlit as st
 import requests
 
-# Step 2: Replace 'YOUR_API_KEY_HERE' with your actual OpenWeatherMap API Key
+# OpenWeatherMap API key (replace 'YOUR_API_KEY_HERE' with your actual API key)
 API_KEY = 'a78526fa98c71a096126f3cf2e3cde22'
 
-# Step 3: Function to fetch temperature data from OpenWeatherMap
-def get_temperature(city_name):
+# Predefined list of cities for the dropdown
+CITY_LIST = [
+    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
+    'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
+    'Miami', 'Atlanta', 'Boston', 'Seattle', 'Denver', 'Las Vegas',
+    'Portland', 'Austin', 'Orlando', 'Minneapolis', 'Detroit'
+]
+
+# Function to fetch weather data from OpenWeatherMap API
+def get_weather_data(city_name):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={API_KEY}&units=metric"
     response = requests.get(url)
     data = response.json()
@@ -16,27 +21,35 @@ def get_temperature(city_name):
     if data.get("cod") != 200:
         return None  # City not found or other error
     else:
-        temperature = data['main']['temp']
-        return temperature
+        weather_info = {
+            "temperature": data['main']['temp'],
+            "condition": data['weather'][0]['description'],
+            "humidity": data['main']['humidity'],
+            "wind_speed": data['wind']['speed']
+        }
+        return weather_info
 
-# Step 4: Streamlit App for getting the weather
+# Streamlit App
 def main():
     # App title
-    st.title('Weather App')
+    st.title('Enhanced Weather App')
 
-    # Input for city name
-    city_name = st.text_input('Enter City Name', 'New York')
+    # Dropdown list for selecting the city
+    city_name = st.selectbox('Select a City:', CITY_LIST)
 
-    # Button to trigger the temperature fetching
-    if st.button('Get Temperature'):
-        temperature = get_temperature(city_name)
+    # Button to trigger the weather fetching
+    if st.button('Get Weather'):
+        weather_data = get_weather_data(city_name)
         
-        # If temperature is found, display it
-        if temperature is not None:
-            st.write(f"The current temperature in {city_name} is {temperature}°C.")
+        # If weather data is found, display it
+        if weather_data is not None:
+            st.write(f"The current temperature in {city_name} is {weather_data['temperature']}°C.")
+            st.write(f"Weather Condition: {weather_data['condition'].capitalize()}.")
+            st.write(f"Humidity: {weather_data['humidity']}%.")
+            st.write(f"Wind Speed: {weather_data['wind_speed']} m/s.")
         else:
             st.write("City not found or error in fetching weather data. Please try again.")
 
-# Step 5: Run the main function when the script is executed
+# Run the app
 if __name__ == "__main__":
     main()
