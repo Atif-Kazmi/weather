@@ -11,7 +11,7 @@ def get_weather_data(city_name):
             st.error("API Key not set. Please set 'OPENWEATHER_API_KEY' environment variable.")
             return None
 
-        # Make the API request
+        # Make the API request to get weather data for the city
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=metric"
         response = requests.get(url)
         data = response.json()
@@ -35,14 +35,27 @@ def get_weather_data(city_name):
 
 # Streamlit App
 def main():
-    st.title('Enhanced Weather App')
+    st.title('Global Weather App')
 
-    # Predefined list of cities for the dropdown (could be expanded or fetched dynamically)
-    CITY_LIST = [
-        'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
-        'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
-        'Miami', 'Atlanta', 'Boston', 'Seattle', 'Denver', 'Las Vegas',
-        'Portland', 'Austin', 'Orlando', 'Minneapolis', 'Detroit'
-    ]
+    # Input field for the user to type any city name
+    city_name = st.text_input('Enter a City Name', '')
 
-    # Dropdown list for selecting t
+    # Button to trigger the weather fetching
+    if st.button('Get Weather'):
+        if city_name.strip():
+            weather_data = get_weather_data(city_name.strip())
+            
+            if weather_data is not None:
+                st.write(f"### Weather in {city_name.capitalize()}:")
+                st.write(f"**Temperature**: {weather_data['temperature']}°C")
+                st.write(f"**Condition**: {weather_data['condition'].capitalize()}")
+                st.write(f"**Humidity**: {weather_data['humidity']}%")
+                st.write(f"**Wind Speed**: {weather_data['wind_speed']} m/s")
+            else:
+                st.error("Unable to retrieve weather for the specified city.")
+        else:
+            st.warning("Please enter a city name.")
+
+# Run the app
+if __name__ == "__main__":
+    main()
