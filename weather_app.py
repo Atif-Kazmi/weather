@@ -5,7 +5,7 @@ import streamlit as st
 import requests
 
 # Step 2: Replace 'YOUR_API_KEY_HERE' with your actual OpenWeatherMap API Key
-API_KEY = 'YOUR_API_KEY_HERE'
+API_KEY = 'a78526fa98c71a096126f3cf2e3cde22'
 
 # Step 3: Function to fetch temperature data from OpenWeatherMap
 def get_temperature(city_name):
